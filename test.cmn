@@ -1,0 +1,7 @@
+struct hoge { 
+       cpcaUBYTE value = 1; 
+       cpcaULONG List = 1;
+       struct fuga {
+       	      cpcaUBYTE Count = 1;
+       };
+};
