@@ -6,8 +6,8 @@
 
 namespace PSU {
   Driver::Driver()
-    :trace_scanning(false),
-     trace_parsing(false),
+    :trace_scanning(true),
+     trace_parsing(true),
      tree(NULL)
      {}
 

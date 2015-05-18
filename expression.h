@@ -60,7 +60,6 @@ class StructNode : public ExprNode
 
   virtual void print(std::ostream &os, unsigned int depth) const
   {
-    os << std::endl;
     os << indent(depth) << "struct " << name << " {" << std::endl;
     defs->print(os, depth+1);
     os << indent(depth) << "};" << std::endl;
@@ -100,18 +99,54 @@ class HexNode : public ExprNode {
   }
 };
 
+class StringNode : public ExprNode {
+ private:
+  std::string value;
+ public:
+  StringNode(std::string _value) 
+    :ExprNode(), value(_value) { }
+  virtual void print(std::ostream &os, unsigned int depth) const {
+    os << '"' << value << '"';
+  }
+};
+
+class DirectDeclaration : public ExprNode {
+ private:
+  std::string name;
+  bool isPointer;
+ public:
+  explicit DirectDeclaration(std::string _name, bool _isPointer)
+    : ExprNode(), name(_name), isPointer(_isPointer) {}
+  virtual void print(std::ostream &os, unsigned int depth) const {
+    os << ((isPointer) ? "*" : "") << name;
+  }
+};
+
+class ArrayNode : public ExprNode {
+ private:
+  int cnt;
+  std::string name;
+ public:
+  explicit ArrayNode(std::string _name, int _cnt)
+    : ExprNode(), name(_name), cnt(_cnt) {}
+  virtual void print(std::ostream &os, unsigned int depth) const {
+    os << name << "[" << cnt << "]";
+  }
+};
 
 class AssignNode : public ExprNode {
  private:
-  std::string name;
+  ExprNode* dec;
   std::string type;
   ExprNode* def;
  public:
-  explicit AssignNode(std::string _type, std::string _name, ExprNode* _def) 
-    : ExprNode(), type(_type), name(_name), def(_def) {}
+  explicit AssignNode(std::string _type, ExprNode* _dec, ExprNode* _def) 
+    : ExprNode(), type(_type), dec(_dec), def(_def) {}
   
   virtual void print(std::ostream &os, unsigned int depth) const {
-    os << indent(depth) << type << " " << name << " = ";
+    os << indent(depth) << type << " ";
+    dec->print(os, depth);
+    os << " = ";
     def->print(os, depth);
     os << ";";
   }

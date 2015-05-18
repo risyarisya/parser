@@ -1,3 +1,6 @@
+SP  (u8|u|U|L)
+ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+WS  [ \t\v\n\f]
 %{
 #include "scanner.h"
 
@@ -36,7 +39,6 @@ typedef PSU::Parser::token_type token_type;
 ";" { return Parser::token::SEMICOLON; }
 "struct" { return Parser::token::STRUCT; }
 
-
 [1-9][0-9]* {
   yylval->integerVal = atoi(yytext);
   return token::INTEGER;
@@ -52,13 +54,21 @@ typedef PSU::Parser::token_type token_type;
   return token::TYPEDEF_NAME;
 }
 
+\"([^\\\"]|\\.)*\" {
+		   std::cout << "inininin" << std::endl;
+  yylval->stringVal = new std::string(yytext, yyleng);
+  return token::STRING_LITERAL;
+}
+
 [a-zA-Z_][0-9a-zA-Z_-]* {
   yylval->stringVal = new std::string(yytext, yyleng);
   return token::IDENTIFIER;
 }
 
-[" "\t\r]+ {
-}
+
+
+
+[" "|\t|\r]+ {}
 
 "\n" { 
     yylloc->lines(yyleng);
